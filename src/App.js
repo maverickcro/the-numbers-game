@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
+import Navigation from "./components/Navigation";
 
 const App = () => {
   const [randomNumber, setRandomNumber] = useState(generateRandomNumber());
@@ -53,6 +54,7 @@ const App = () => {
 
   return (
     <div className="App">
+      <Navigation />
       <h1>That Numbers Game</h1>
       <p>
         Nasumični broj: <strong>{randomNumber}</strong>
