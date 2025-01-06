@@ -1,0 +1,95 @@
+.main-screen {
+  text-align: center;
+  width: 100%;
+  margin-top: 4.5rem;
+}
+
+.board {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+  margin: 20px auto;
+  width: 80%; // prilagodite širinu po potrebi
+}
+
+.column {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cell {
+  width: 100px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 5px 20px;
+  user-select: none;
+  outline: none;
+  position: relative;
+
+  &.valid {
+    background: #fff;
+    color: #000;
+  }
+
+  &.invalid {
+    background: #f0f0f0;
+    color: #ccc;
+    pointer-events: none;
+  }
+
+  span {
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    color: lightgrey;
+    font-size: 12px;
+
+    &.valid {
+      color: #000;
+    }
+
+    &.invalid {
+      color: #ccc;
+    }
+  }
+}
+
+.cell.filled {
+  background: #d4edda;
+  color: #155724;
+}
+
+.game-over {
+  color: red;
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+.win {
+  color: green;
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
