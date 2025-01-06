@@ -24,7 +24,12 @@ const Navigation = ({ updateSettings }) => {
 
   return (
     <nav>
-      <h1>TNGame</h1>
+      <img
+        src="/newLogo.png"
+        alt="TNGame Logo"
+        className="logo"
+        style={{ height: "4rem" }}
+      />
       <ul>
         <li>
           <button onClick={openRulesModal}>Rules</button>

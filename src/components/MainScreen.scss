@@ -4,6 +4,14 @@
   margin-top: 4.5rem;
 }
 
+.main-number {
+  position: absolute;
+  top: 4rem;
+  left: 50%;
+  translate: -50%;
+  font-size: 4rem;
+}
+
 .board {
   display: flex;
   justify-content: space-around;

@@ -33,7 +33,7 @@ const SettingsModal = ({ onClose, updateSettings }) => {
               checked={jokersEnabled}
               onChange={() => setJokersEnabled(!jokersEnabled)}
             />
-            Enable Jokers
+            Enable Jokers(coming soon)
           </label>
         </div>
         <div className="setting">
