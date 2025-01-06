@@ -1,16 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./SettingsModal.scss";
 
-const SettingsModal = ({ onClose }) => {
+const SettingsModal = ({ onClose, updateSettings }) => {
   const [jokersEnabled, setJokersEnabled] = useState(false);
-  const [orderCount, setOrderCount] = useState(5);
+  const [orderCount, setOrderCount] = useState(6);
   const [numberRange, setNumberRange] = useState(100);
+
+  useEffect(() => {
+    const savedSettings = JSON.parse(localStorage.getItem("gameSettings"));
+    if (savedSettings) {
+      setJokersEnabled(savedSettings.jokersEnabled);
+      setOrderCount(savedSettings.orderCount);
+      setNumberRange(savedSettings.numberRange);
+    }
+  }, []);
+
+  const handleSave = () => {
+    const newSettings = { jokersEnabled, orderCount, numberRange };
+    updateSettings(newSettings);
+    localStorage.setItem("gameSettings", JSON.stringify(newSettings));
+    onClose();
+  };
 
   return (
     <div className="settings-modal">
       <div className="modal-content">
         <h2>Settings</h2>
-        <div>
+        <div className="setting">
           <label>
             <input
               type="checkbox"
@@ -20,31 +36,35 @@ const SettingsModal = ({ onClose }) => {
             Enable Jokers
           </label>
         </div>
-        <div>
-          <label>
-            Order Count:
-            <select
-              value={orderCount}
-              onChange={(e) => setOrderCount(Number(e.target.value))}
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-            </select>
-          </label>
+        <div className="setting">
+          <label>Order Count:</label>
+          <div className="options">
+            {[6, 10, 20].map((count) => (
+              <button
+                key={count}
+                className={`option ${orderCount === count ? "active" : ""}`}
+                onClick={() => setOrderCount(count)}
+              >
+                {count}
+              </button>
+            ))}
+          </div>
         </div>
-        <div>
-          <label>
-            Number Range:
-            <select
-              value={numberRange}
-              onChange={(e) => setNumberRange(Number(e.target.value))}
-            >
-              <option value={100}>1-100</option>
-              <option value={1000}>1-1000</option>
-            </select>
-          </label>
+        <div className="setting">
+          <label>Numbers range:</label>
+          <div className="options">
+            {[100, 1000].map((range) => (
+              <button
+                key={range}
+                className={`option ${numberRange === range ? "active" : ""}`}
+                onClick={() => setNumberRange(range)}
+              >
+                {range}
+              </button>
+            ))}
+          </div>
         </div>
+        <button onClick={handleSave}>Save</button>
         <button onClick={onClose}>Close</button>
       </div>
     </div>

@@ -27,6 +27,7 @@
   align-items: center;
   background: #fff;
   border: 1px solid #ccc;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
@@ -92,4 +93,51 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+
+.main-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+
+  .modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    h2 {
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    p {
+      font-size: 18px;
+      margin: 20px 0;
+    }
+
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 5px;
+      margin: 10px;
+
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
 }

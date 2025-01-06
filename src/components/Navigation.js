@@ -3,7 +3,7 @@ import "./Navigation.scss";
 import RulesModal from "./RulesModal";
 import SettingsModal from "./SettingsModal";
 
-const Navigation = () => {
+const Navigation = ({ updateSettings }) => {
   const [isRulesModalOpen, setIsRulesModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
@@ -34,7 +34,9 @@ const Navigation = () => {
         </li>
       </ul>
       {isRulesModalOpen && <RulesModal onClose={closeModals} />}
-      {isSettingsModalOpen && <SettingsModal onClose={closeModals} />}
+      {isSettingsModalOpen && (
+        <SettingsModal onClose={closeModals} updateSettings={updateSettings} />
+      )}
     </nav>
   );
 };
