@@ -71,7 +71,7 @@ const MainScreen = ({ settings }) => {
       setBoard(updatedBoard);
       setGameOver(true);
       setShowModal(true);
-      setLoadingNumber(randomNumbers[currentNumberIndex]); // Ažuriramo randomNumber prije prikazivanja modala
+      setLoadingNumber(randomNumbers[currentNumberIndex]);
       return;
     }
 
@@ -81,7 +81,6 @@ const MainScreen = ({ settings }) => {
     } else {
       const nextNumberIndex = currentNumberIndex + 1;
 
-      // Provjera da li postoje validne ćelije za sljedeći broj
       const hasValidCells = updatedBoard.some((num, index) => {
         if (num === null) {
           const left = updatedBoard.slice(0, index).filter((n) => n !== null);
@@ -103,7 +102,7 @@ const MainScreen = ({ settings }) => {
         setBoard(updatedBoard);
         setGameOver(true);
         setShowModal(true);
-        setLoadingNumber(randomNumbers[nextNumberIndex]); // Ažuriramo randomNumber prije prikazivanja modala
+        setLoadingNumber(randomNumbers[nextNumberIndex]);
       } else {
         startLoadingEffect(() => {
           setBoard(updatedBoard);
