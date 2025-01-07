@@ -3,7 +3,7 @@ import "./SettingsModal.scss";
 
 const SettingsModal = ({ onClose, updateSettings }) => {
   const [jokersEnabled, setJokersEnabled] = useState(false);
-  const [orderCount, setOrderCount] = useState(6);
+  const [orderCount, setOrderCount] = useState(10);
   const [numberRange, setNumberRange] = useState(100);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const SettingsModal = ({ onClose, updateSettings }) => {
         <div className="setting">
           <label>Order Count:</label>
           <div className="options">
-            {[6, 10, 20].map((count) => (
+            {[5, 10, 20].map((count) => (
               <button
                 key={count}
                 className={`option ${orderCount === count ? "active" : ""}`}

@@ -3,31 +3,39 @@ import Confetti from "react-confetti";
 import "./MainScreen.scss";
 
 const MainScreen = ({ settings }) => {
-  const [board, setBoard] = useState(Array(settings.orderCount).fill(null));
+  const validOrderCounts = [5, 10, 20];
+  const orderCount = validOrderCounts.includes(settings.orderCount)
+    ? settings.orderCount
+    : 5;
+
+  const [board, setBoard] = useState(Array(orderCount).fill(null));
   const [randomNumbers, setRandomNumbers] = useState(
-    generateRandomNumbers(settings.orderCount, settings.numberRange)
+    generateRandomNumbers(orderCount, settings.numberRange)
   );
   const [currentNumberIndex, setCurrentNumberIndex] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [win, setWin] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [loadingNumber, setLoadingNumber] = useState(null);
-  console.log("random numbers", randomNumbers);
+
   useEffect(() => {
-    setBoard(Array(settings.orderCount).fill(null));
-    setRandomNumbers(
-      generateRandomNumbers(settings.orderCount, settings.numberRange)
-    );
+    const numbers = generateRandomNumbers(orderCount, settings.numberRange);
+    setBoard(Array(orderCount).fill(null));
+    setRandomNumbers(numbers);
     setCurrentNumberIndex(0);
     setGameOver(false);
     setWin(false);
     setShowModal(false);
-  }, [settings]);
+    setLoadingNumber(null);
+  }, [settings, orderCount]);
 
   function generateRandomNumbers(count, range) {
     const numbers = new Set();
     while (numbers.size < count) {
-      const randomNumber = Math.floor(Math.random() * range);
+      let randomNumber = Math.floor(Math.random() * range);
+      while (randomNumber === 0) {
+        randomNumber = Math.floor(Math.random() * range); // Generiramo novi broj ako je nula
+      }
       numbers.add(randomNumber);
     }
     return Array.from(numbers);
@@ -60,10 +68,10 @@ const MainScreen = ({ settings }) => {
       .every((num, i, arr) => !i || arr[i - 1] <= num);
 
     if (!isSorted) {
-      setBoard(updatedBoard); // Prikazujemo posljednji broj
-      setCurrentNumberIndex(currentNumberIndex + 1);
+      setBoard(updatedBoard);
       setGameOver(true);
       setShowModal(true);
+      setLoadingNumber(randomNumbers[currentNumberIndex]); // Ažuriramo randomNumber prije prikazivanja modala
       return;
     }
 
@@ -92,10 +100,10 @@ const MainScreen = ({ settings }) => {
       });
 
       if (!hasValidCells) {
-        setBoard(updatedBoard); // Prikazujemo posljednji broj
-        setCurrentNumberIndex(currentNumberIndex + 1);
+        setBoard(updatedBoard);
         setGameOver(true);
         setShowModal(true);
+        setLoadingNumber(randomNumbers[nextNumberIndex]); // Ažuriramo randomNumber prije prikazivanja modala
       } else {
         startLoadingEffect(() => {
           setBoard(updatedBoard);
@@ -106,14 +114,14 @@ const MainScreen = ({ settings }) => {
   };
 
   const restartGame = () => {
-    setBoard(Array(settings.orderCount).fill(null));
-    setRandomNumbers(
-      generateRandomNumbers(settings.orderCount, settings.numberRange)
-    );
+    const numbers = generateRandomNumbers(orderCount, settings.numberRange);
+    setBoard(Array(orderCount).fill(null));
+    setRandomNumbers(numbers);
     setCurrentNumberIndex(0);
     setGameOver(false);
     setWin(false);
     setShowModal(false);
+    setLoadingNumber(null);
   };
 
   const startLoadingEffect = (callback) => {
@@ -129,87 +137,74 @@ const MainScreen = ({ settings }) => {
     }, 20);
   };
 
+  const rows = Math.ceil(Math.ceil(orderCount / 5));
+
   return (
-    <>
-      <p className="main-number">
-        {loadingNumber !== null
-          ? loadingNumber
-          : randomNumbers[currentNumberIndex]}
-      </p>
-      <div className="main-screen">
-        {win && <Confetti />}
-        <div className="board">
-          <div className="column">
-            {board
-              .slice(0, Math.ceil(settings.orderCount / 2))
-              .map((num, index) => {
-                const valid = gameOver ? false : isValidCell(index);
-                return (
-                  <div
-                    key={index}
-                    className={`cell ${num !== null ? "filled" : ""} ${
-                      valid ? "valid" : "invalid"
-                    }`}
-                    onClick={() => valid && handleCellClick(index)}
-                  >
-                    <span className={valid ? "valid" : "invalid"}>
-                      {index + 1}
-                    </span>
-                    {num !== null ? num : ""}
-                  </div>
-                );
-              })}
-          </div>
-          <div className="column">
-            {board
-              .slice(Math.ceil(settings.orderCount / 2))
-              .map((num, index) => {
-                const valid = gameOver
-                  ? false
-                  : isValidCell(index + Math.ceil(settings.orderCount / 2));
-                return (
-                  <div
-                    key={index + Math.ceil(settings.orderCount / 2)}
-                    className={`cell ${num !== null ? "filled" : ""} ${
-                      valid ? "valid" : "invalid"
-                    }`}
-                    onClick={() =>
-                      valid &&
-                      handleCellClick(
-                        index + Math.ceil(settings.orderCount / 2)
-                      )
-                    }
-                  >
-                    <span className={valid ? "valid" : "invalid"}>
-                      {index + 1 + Math.ceil(settings.orderCount / 2)}
-                    </span>
-                    {num !== null ? num : ""}
-                  </div>
-                );
-              })}
+    <div className="main-screen">
+      {win && <Confetti />}
+      <div className="main-header">
+        <p>
+          Welcome to <b>That Numbers Game</b>, a test of skill and luck!
+        </p>
+        <p>
+          Your goal is to place random numbers into a grid in ascending order.
+          Sounds easy? Think again!
+        </p>
+        <p>One wrong move, and it's game over!</p>
+      </div>
+      <div className="main-game">
+        <span className="main-number">
+          {loadingNumber !== null
+            ? loadingNumber
+            : randomNumbers[currentNumberIndex]}
+        </span>
+        <div
+          className="board"
+          style={{
+            gridTemplateColumns: `repeat(5, 1fr)`,
+            gridTemplateRows: `repeat(${rows}, 1fr)`,
+          }}
+        >
+          {board.map((num, index) => {
+            const valid = gameOver ? false : isValidCell(index);
+            return (
+              <div
+                key={index}
+                className={`cell ${num !== null ? "filled" : ""} ${
+                  valid ? "valid" : "invalid"
+                }`}
+                onClick={() => valid && handleCellClick(index)}
+              >
+                <span className={valid ? "valid" : "invalid"}>{index + 1}</span>
+                {num !== null ? num : ""}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div className="main-footer">
+        <button onClick={restartGame}>Restart</button>
+        <div>Jokers</div>
+      </div>
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            {win ? (
+              <>
+                <h2>How did you do it??? Impossible!</h2>
+                <p>Congratulations! You won the game!</p>
+              </>
+            ) : (
+              <>
+                <h2>You lost hehe</h2>
+                <p>Better luck next time!</p>
+              </>
+            )}
+            <button onClick={restartGame}>Try again.</button>
           </div>
         </div>
-        {showModal && (
-          <div className="main-modal">
-            <div className="modal-content">
-              {win ? (
-                <>
-                  <h2>How did you do it??? Impossible!</h2>
-                  <p>Congratulations! You won the game!</p>
-                </>
-              ) : (
-                <>
-                  <h2>You lost hehe</h2>
-                  <p>Better luck next time!</p>
-                </>
-              )}
-              <button onClick={restartGame}>Try again.</button>
-            </div>
-          </div>
-        )}
-        <button onClick={restartGame}>Give up and try again.</button>
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 

@@ -1,45 +1,41 @@
 .main-screen {
   text-align: center;
   width: 100%;
-  margin-top: 4.5rem;
+  height: 100vh;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.main-header {
+  padding: 20px;
 }
 
 .main-number {
-  position: absolute;
-  top: 4rem;
-  left: 50%;
-  translate: -50%;
-  font-size: 4rem;
+  font-size: 3rem;
+  font-weight: bold;
 }
 
 .board {
-  display: flex;
-  justify-content: space-around;
+  display: grid;
   gap: 10px;
   margin: 20px auto;
-  width: 80%; // prilagodite širinu po potrebi
-}
-
-.column {
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  grid-auto-flow: row;
 }
 
 .cell {
-  width: 100px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
   background: #fff;
   border: 1px solid #ccc;
-  border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
-  margin: 5px 20px;
   user-select: none;
   outline: none;
   position: relative;
@@ -103,16 +99,16 @@ button:hover {
   background-color: #0056b3;
 }
 
-.main-modal {
+.modal {
   position: fixed;
-  top: 0;
+  bottom: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: auto;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   z-index: 1001;
 
   .modal-content {
