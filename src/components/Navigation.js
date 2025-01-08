@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Navigation.scss";
 import SettingsModal from "./SettingsModal";
+import newLogo from "./assets/newLogo.png";
 
 const Navigation = ({ updateSettings }) => {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
@@ -16,7 +17,7 @@ const Navigation = ({ updateSettings }) => {
   return (
     <nav>
       <img
-        src="/newLogo.png"
+        src={newLogo}
         alt="TNGame Logo"
         className="logo"
         style={{ height: "3rem" }}
