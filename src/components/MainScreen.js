@@ -12,11 +12,17 @@ const MainScreen = ({ settings }) => {
   const [randomNumbers, setRandomNumbers] = useState(
     generateRandomNumbers(orderCount, settings.numberRange)
   );
+  console.log(randomNumbers);
   const [currentNumberIndex, setCurrentNumberIndex] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [win, setWin] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [loadingNumber, setLoadingNumber] = useState(null);
+  const [previousBoard, setPreviousBoard] = useState(null);
+  const [previousNumberIndex, setPreviousNumberIndex] = useState(null);
+  const [undoUsed, setUndoUsed] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
+  const [replaceUsed, setReplaceUsed] = useState(false);
 
   useEffect(() => {
     const numbers = generateRandomNumbers(orderCount, settings.numberRange);
@@ -42,23 +48,32 @@ const MainScreen = ({ settings }) => {
   }
 
   const isValidCell = (index) => {
-    if (board.every((num) => num === null)) return true;
+    if (board[index] === null) return true; // Prazne ćelije su uvijek validne
 
-    const left = board.slice(0, index).filter((num) => num !== null);
-    const right = board.slice(index + 1).filter((num) => num !== null);
+    const currentNumber = randomNumbers[currentNumberIndex];
 
-    const leftValid =
-      left.length === 0 ||
-      randomNumbers[currentNumberIndex] > Math.max(...left);
-    const rightValid =
-      right.length === 0 ||
-      randomNumbers[currentNumberIndex] < Math.min(...right);
+    // Provjera lijeve strane
+    for (let i = 0; i < index; i++) {
+      if (board[i] !== null && currentNumber <= board[i]) {
+        return false;
+      }
+    }
 
-    return leftValid && rightValid;
+    // Provjera desne strane
+    for (let i = index + 1; i < board.length; i++) {
+      if (board[i] !== null && currentNumber >= board[i]) {
+        return false;
+      }
+    }
+
+    return true;
   };
 
   const handleCellClick = (index) => {
     if (gameOver || win || board[index] !== null) return;
+
+    setPreviousBoard([...board]);
+    setPreviousNumberIndex(currentNumberIndex);
 
     const updatedBoard = [...board];
     updatedBoard[index] = randomNumbers[currentNumberIndex];
@@ -75,12 +90,15 @@ const MainScreen = ({ settings }) => {
       return;
     }
 
+    setBoard(updatedBoard); // Ažuriramo ploču prije provjere pobjede
+
     if (!updatedBoard.includes(null)) {
       setWin(true);
       setShowModal(true);
     } else {
       const nextNumberIndex = currentNumberIndex + 1;
 
+      // Provjera da li postoje validne ćelije za sljedeći broj
       const hasValidCells = updatedBoard.some((num, index) => {
         if (num === null) {
           const left = updatedBoard.slice(0, index).filter((n) => n !== null);
@@ -99,17 +117,33 @@ const MainScreen = ({ settings }) => {
       });
 
       if (!hasValidCells) {
-        setBoard(updatedBoard);
         setGameOver(true);
         setShowModal(true);
         setLoadingNumber(randomNumbers[nextNumberIndex]);
       } else {
         startLoadingEffect(() => {
-          setBoard(updatedBoard);
           setCurrentNumberIndex(nextNumberIndex);
         });
       }
     }
+  };
+
+  const findBestPosition = (number) => {
+    const sortedBoard = [...board.filter((num) => num !== null), number].sort(
+      (a, b) => a - b
+    );
+    const position = sortedBoard.indexOf(number);
+
+    let emptyCount = 0;
+    for (let i = 0; i < board.length; i++) {
+      if (board[i] === null) {
+        if (emptyCount === position) {
+          return i;
+        }
+        emptyCount++;
+      }
+    }
+    return -1; // Ako nema validne pozicije
   };
 
   const restartGame = () => {
@@ -121,6 +155,9 @@ const MainScreen = ({ settings }) => {
     setWin(false);
     setShowModal(false);
     setLoadingNumber(null);
+    setHintUsed(false);
+    setReplaceUsed(false);
+    setUndoUsed(false);
   };
 
   const startLoadingEffect = (callback) => {
@@ -136,7 +173,35 @@ const MainScreen = ({ settings }) => {
     }, 20);
   };
 
-  const rows = Math.ceil(Math.ceil(orderCount / 5));
+  const handleUndo = () => {
+    if (previousBoard && previousNumberIndex !== null && !undoUsed) {
+      setBoard(previousBoard);
+      setCurrentNumberIndex(previousNumberIndex);
+      setPreviousBoard(null);
+      setPreviousNumberIndex(null);
+      setUndoUsed(true); // Postavljamo da je undo iskorišten
+    }
+  };
+
+  const handleHint = () => {
+    if (!hintUsed) {
+      const bestPosition = findBestPosition(randomNumbers[currentNumberIndex]);
+      handleCellClick(bestPosition);
+      setHintUsed(true);
+    }
+  };
+
+  const handleReplaceNumber = () => {
+    if (!replaceUsed) {
+      const newNumber = generateRandomNumbers(1, settings.numberRange)[0];
+      const updatedNumbers = [...randomNumbers];
+      updatedNumbers[currentNumberIndex] = newNumber;
+      setRandomNumbers(updatedNumbers);
+      setReplaceUsed(true);
+    }
+  };
+
+  const rows = Math.ceil(orderCount / 5);
 
   return (
     <div className="main-screen">
@@ -183,7 +248,18 @@ const MainScreen = ({ settings }) => {
       </div>
       <div className="main-footer">
         <button onClick={restartGame}>Restart</button>
-        <div>Jokers</div>
+        {/* <button
+          onClick={handleUndo}
+          disabled={undoUsed || currentNumberIndex === 0}
+        >
+          Undo
+        </button>
+        <button onClick={handleHint} disabled={hintUsed}>
+          Hint
+        </button>
+        <button onClick={handleReplaceNumber} disabled={replaceUsed}>
+          Replace Number
+        </button> */}
       </div>
       {showModal && (
         <div className="modal">
