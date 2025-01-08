@@ -12,7 +12,7 @@ const MainScreen = ({ settings }) => {
   const [randomNumbers, setRandomNumbers] = useState(
     generateRandomNumbers(orderCount, settings.numberRange)
   );
-  console.log(randomNumbers);
+  //   console.log(randomNumbers);
   const [currentNumberIndex, setCurrentNumberIndex] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [win, setWin] = useState(false);
