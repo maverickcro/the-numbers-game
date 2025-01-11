@@ -48,18 +48,16 @@ const MainScreen = ({ settings }) => {
   }
 
   const isValidCell = (index) => {
-    if (board[index] === null) return true; // Prazne ćelije su uvijek validne
-
     const currentNumber = randomNumbers[currentNumberIndex];
 
-    // Provjera lijeve strane
+    // Check left side
     for (let i = 0; i < index; i++) {
       if (board[i] !== null && currentNumber <= board[i]) {
         return false;
       }
     }
 
-    // Provjera desne strane
+    // Check right side
     for (let i = index + 1; i < board.length; i++) {
       if (board[i] !== null && currentNumber >= board[i]) {
         return false;
@@ -90,7 +88,7 @@ const MainScreen = ({ settings }) => {
       return;
     }
 
-    setBoard(updatedBoard); // Ažuriramo ploču prije provjere pobjede
+    setBoard(updatedBoard); // Update the board before checking for win
 
     if (!updatedBoard.includes(null)) {
       setWin(true);
@@ -98,7 +96,7 @@ const MainScreen = ({ settings }) => {
     } else {
       const nextNumberIndex = currentNumberIndex + 1;
 
-      // Provjera da li postoje validne ćelije za sljedeći broj
+      // Check if there are valid cells for the next number
       const hasValidCells = updatedBoard.some((num, index) => {
         if (num === null) {
           const left = updatedBoard.slice(0, index).filter((n) => n !== null);
