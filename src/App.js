@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Navigation from "./components/Navigation";
 import MainScreen from "./components/MainScreen";
+import { Analytics } from "@vercel/analytics/react";
 import "./App.css";
 
 const App = () => {
@@ -28,6 +29,7 @@ const App = () => {
 
   return (
     <div className="app">
+      <Analytics />
       <Navigation updateSettings={updateSettings} />
       <MainScreen settings={settings} />
     </div>
