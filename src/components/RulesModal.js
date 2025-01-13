@@ -25,10 +25,13 @@ const RulesModal = ({ onClose }) => {
           <strong>smallest to biggest</strong>.
         </p>
         <p>
-          Each number must be bigger than the one on its <strong>left</strong>{" "}
-          and smaller than the one on its <strong>right</strong>.
+          The <strong>more time</strong> you take, the{" "}
+          <strong>less score</strong> you will get.
         </p>
-        <p>Use jokers to help you get the best score.</p>
+        <p>
+          Using <strong>jokers</strong> will help but will also{" "}
+          <strong>reduce</strong> your score a bit.
+        </p>
         <p>If you make a mistake, the game is over.</p>
         <img src={howToPlayGif} alt="How to Play" className="how-to-play" />
         <p>

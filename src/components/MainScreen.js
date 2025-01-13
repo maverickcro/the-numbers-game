@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
 import "./MainScreen.scss";
 
@@ -23,6 +23,9 @@ const MainScreen = ({ settings }) => {
   const [undoUsed, setUndoUsed] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
   const [replaceUsed, setReplaceUsed] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const [score, setScore] = useState(0);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     const numbers = generateRandomNumbers(orderCount, settings.numberRange);
@@ -33,21 +36,41 @@ const MainScreen = ({ settings }) => {
     setWin(false);
     setShowModal(false);
     setLoadingNumber(null);
+    setTimer(0);
+    setScore(0);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    timerRef.current = setInterval(() => {
+      setTimer((prev) => prev + 1);
+    }, 1000);
+    return () => clearInterval(timerRef.current);
   }, [settings, orderCount]);
+
+  useEffect(() => {
+    if (gameOver || win) {
+      clearInterval(timerRef.current);
+      if (win) {
+        calculateScore();
+      }
+    }
+  }, [gameOver, win]);
 
   function generateRandomNumbers(count, range) {
     const numbers = new Set();
     while (numbers.size < count) {
       let randomNumber = Math.floor(Math.random() * range);
       while (randomNumber === 0) {
-        randomNumber = Math.floor(Math.random() * range); // Generiramo novi broj ako je nula
+        randomNumber = Math.floor(Math.random() * range); // Generate a new number if it's zero
       }
       numbers.add(randomNumber);
     }
     return Array.from(numbers);
   }
 
-  const isValidCell = (index) => {
+  function isValidCell(index) {
+    if (board[index] === null) return true; // Empty cells are always valid
+
     const currentNumber = randomNumbers[currentNumberIndex];
 
     // Check left side
@@ -65,7 +88,27 @@ const MainScreen = ({ settings }) => {
     }
 
     return true;
-  };
+  }
+
+  function calculateScore() {
+    const maxTime = 600; // 10 minutes
+    const timeTaken = timer;
+    let decrementRate;
+
+    if (orderCount === 5) {
+      decrementRate = 2.7; // Faster decrement for smaller order count
+    } else if (orderCount === 10) {
+      decrementRate = 1.7; // Moderate decrement for medium order count
+    } else {
+      decrementRate = 0.7; // Slower decrement for larger order count
+    }
+
+    const calculatedScore = Math.max(
+      1,
+      1000 - Math.floor((timeTaken / maxTime) * 1000 * decrementRate)
+    );
+    setScore(calculatedScore);
+  }
 
   const handleCellClick = (index) => {
     if (gameOver || win || board[index] !== null) return;
@@ -126,24 +169,6 @@ const MainScreen = ({ settings }) => {
     }
   };
 
-  const findBestPosition = (number) => {
-    const sortedBoard = [...board.filter((num) => num !== null), number].sort(
-      (a, b) => a - b
-    );
-    const position = sortedBoard.indexOf(number);
-
-    let emptyCount = 0;
-    for (let i = 0; i < board.length; i++) {
-      if (board[i] === null) {
-        if (emptyCount === position) {
-          return i;
-        }
-        emptyCount++;
-      }
-    }
-    return -1; // Ako nema validne pozicije
-  };
-
   const restartGame = () => {
     const numbers = generateRandomNumbers(orderCount, settings.numberRange);
     setBoard(Array(orderCount).fill(null));
@@ -153,9 +178,14 @@ const MainScreen = ({ settings }) => {
     setWin(false);
     setShowModal(false);
     setLoadingNumber(null);
-    setHintUsed(false);
-    setReplaceUsed(false);
-    setUndoUsed(false);
+    setTimer(0);
+    setScore(0);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    timerRef.current = setInterval(() => {
+      setTimer((prev) => prev + 1);
+    }, 1000);
   };
 
   const startLoadingEffect = (callback) => {
@@ -177,7 +207,7 @@ const MainScreen = ({ settings }) => {
       setCurrentNumberIndex(previousNumberIndex);
       setPreviousBoard(null);
       setPreviousNumberIndex(null);
-      setUndoUsed(true); // Postavljamo da je undo iskorišten
+      setUndoUsed(true); // Mark undo as used
     }
   };
 
@@ -197,6 +227,24 @@ const MainScreen = ({ settings }) => {
       setRandomNumbers(updatedNumbers);
       setReplaceUsed(true);
     }
+  };
+
+  const findBestPosition = (number) => {
+    const sortedBoard = [...board.filter((num) => num !== null), number].sort(
+      (a, b) => a - b
+    );
+    const position = sortedBoard.indexOf(number);
+
+    let emptyCount = 0;
+    for (let i = 0; i < board.length; i++) {
+      if (board[i] === null) {
+        if (emptyCount === position) {
+          return i;
+        }
+        emptyCount++;
+      }
+    }
+    return -1; // If no valid position
   };
 
   const rows = Math.ceil(orderCount / 5);
@@ -259,13 +307,19 @@ const MainScreen = ({ settings }) => {
           Replace Number
         </button> */}
       </div>
+      <div className="timer-score">
+        <p>Time: {timer} seconds</p>
+        {win && <p>Score: {score}</p>}
+      </div>
       {showModal && (
         <div className="modal">
           <div className="modal-content">
             {win ? (
               <>
-                <h2>How did you do it??? Impossible!</h2>
-                <p>Congratulations! You won the game!</p>
+                <h3>You SOMEHOW won!</h3>
+                <p>
+                  Score: <strong>{score}</strong> points
+                </p>
               </>
             ) : (
               <>
