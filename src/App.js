@@ -21,14 +21,11 @@ const App = () => {
   }, [settings]);
 
   const updateSettings = (newSettings) => {
-    setSettings((prevSettings) => ({
-      ...prevSettings,
-      ...newSettings,
-    }));
+    setSettings(newSettings);
   };
 
   return (
-    <div className="app">
+    <div className="App">
       <Navigation updateSettings={updateSettings} />
       <MainScreen settings={settings} />
       <Analytics />
