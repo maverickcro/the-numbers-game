@@ -29,9 +29,9 @@ const App = () => {
 
   return (
     <div className="app">
-      <Analytics />
       <Navigation updateSettings={updateSettings} />
       <MainScreen settings={settings} />
+      <Analytics />
     </div>
   );
 };
