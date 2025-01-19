@@ -253,14 +253,11 @@ const MainScreen = ({ settings }) => {
     <div className="main-screen">
       {win && <Confetti />}
       <div className="main-header">
+        <h1>That Numbers Game</h1>
         <p>
-          Welcome to <b>That Numbers Game</b>, a test of skill and luck!
+          Put random numbers in the grid in order from{" "}
+          <b>smallest to biggest</b> to win!
         </p>
-        <p>
-          Your goal is to place random numbers into a grid in ascending order.
-          Sounds easy? Think again!
-        </p>
-        <p>One wrong move, and it's game over!</p>
       </div>
       <div className="main-game">
         <span className="main-number">
@@ -293,8 +290,9 @@ const MainScreen = ({ settings }) => {
         </div>
       </div>
       <div className="main-footer">
-        <button onClick={restartGame}>Restart</button>
-        {/* <button
+        <div className="jokers-restart">
+          <button onClick={restartGame}>Restart</button>
+          {/* <button
           onClick={handleUndo}
           disabled={undoUsed || currentNumberIndex === 0}
         >
@@ -306,10 +304,11 @@ const MainScreen = ({ settings }) => {
         <button onClick={handleReplaceNumber} disabled={replaceUsed}>
           Replace Number
         </button> */}
-      </div>
-      <div className="timer-score">
-        <p>Time: {timer} seconds</p>
-        {win && <p>Score: {score}</p>}
+        </div>
+        <div className="timer-score">
+          <p>Time: {timer} seconds</p>
+          {win && <p>Score: {score}</p>}
+        </div>
       </div>
       {showModal && (
         <div className="modal">

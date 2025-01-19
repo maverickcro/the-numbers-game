@@ -11,15 +11,27 @@
   }
   &-header {
     padding: 0 20px;
+    height: 33%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   &-number {
     font-size: 3rem;
     font-weight: bold;
+    height: 33%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   &-footer {
     margin-top: 20px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    height: 33%;
   }
 }
 
