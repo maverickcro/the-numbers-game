@@ -315,7 +315,7 @@ const MainScreen = ({ settings }) => {
           <div className="modal-content">
             {win ? (
               <>
-                <h3>You SOMEHOW won!</h3>
+                <h3>You SOMEHOW won!!!</h3>
                 <p>
                   Score: <strong>{score}</strong> points
                 </p>
