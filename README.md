@@ -1,4 +1,7 @@
-# I wanted to make an addictive numbers game but was distracted and didn't finish it.
+# This streamer guy had an amazing idea for a minigame.
+
+He plays it here: https://www.youtube.com/watch?v=IoovV456NNA
+Shoutout to @erislash!
 
 # Still need to implement Joker functions.
 
